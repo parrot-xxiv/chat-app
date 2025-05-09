@@ -9,6 +9,8 @@ export default function LogoutButton() {
     const router = useRouter();
 
     const handleLogout = async () => {
+        const userId = pb.authStore.record?.id || ''
+        pb.collection('users').update(userId, {isOnline: false})
         pb.authStore.clear();
         document.cookie = 'pb_auth=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax';
         router.push('/');

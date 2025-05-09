@@ -12,22 +12,6 @@ import pb from "@/lib/pocketbase"
 import { toast } from "sonner"
 
 export default function LoginForm() {
-  // const [email, setEmail] = useState("")
-  // const [password, setPassword] = useState("")
-  // const [isLoading, setIsLoading] = useState(false)
-  // const router = useRouter()
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   setIsLoading(true)
-
-  //   // In a real app, you would authenticate the user here
-  //   // For demo purposes, we'll just redirect to the chat page
-  //   setTimeout(() => {
-  //     router.push("/chat")
-  //     setIsLoading(false)
-  //   }, 1000)
-  // }
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,18 +19,20 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    pb.authStore.isValid && router.push('/chat')
+    if(pb.authStore.isValid) router.push('/chat')
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await pb.collection('users').authWithPassword(email, password);
+      const user = await pb.collection('users').authWithPassword(email, password);
+      await pb.collection("users").update(user.record.id,{isOnline: true});
       document.cookie = pb.authStore.exportToCookie();
       router.push('/chat');
     } catch (err) {
       toast.error("Invalid credentials!");
+      console.error(err)
       setIsLoading(false);
     }
   };
