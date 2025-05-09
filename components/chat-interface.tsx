@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -11,6 +10,7 @@ import UserList from "@/components/user-list"
 import ChatMessages from "@/components/chat-messages"
 import { MessageSquare, Users, LogOut, Send, Plus } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
+import LogoutButton from "./logout-button"
 
 // Mock data for demonstration
 const MOCK_USERS = [
@@ -58,8 +58,8 @@ export default function ChatInterface() {
   const [chatType, setChatType] = useState<"direct" | "group">("direct")
   const [messages, setMessages] = useState(MOCK_MESSAGES)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
-  const router = useRouter()
   const isMobile = useMediaQuery("(max-width: 768px)")
+  const [users, setUsers] = useState([])
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,10 +89,6 @@ export default function ChatInterface() {
     }, 2000)
   }
 
-  const handleLogout = () => {
-    router.push("/")
-  }
-
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen)
   }
@@ -107,13 +103,12 @@ export default function ChatInterface() {
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar - hidden on mobile unless toggled */}
       <div
-        className={`${
-          isMobile
+        className={`${isMobile
             ? isMobileSidebarOpen
               ? "fixed inset-0 z-50 block w-72 bg-white shadow-lg"
               : "hidden"
             : "w-72 border-r bg-white"
-        } flex flex-col h-full`}
+          } flex flex-col h-full`}
       >
         <div className="p-4 border-b">
           <h2 className="text-xl font-bold">ChatApp</h2>
@@ -150,9 +145,8 @@ export default function ChatInterface() {
               {MOCK_GROUPS.map((group) => (
                 <div
                   key={group.id}
-                  className={`flex items-center p-2 rounded-lg cursor-pointer hover:bg-gray-100 ${
-                    activeChat === group.id && chatType === "group" ? "bg-gray-100" : ""
-                  }`}
+                  className={`flex items-center p-2 rounded-lg cursor-pointer hover:bg-gray-100 ${activeChat === group.id && chatType === "group" ? "bg-gray-100" : ""
+                    }`}
                   onClick={() => {
                     setActiveChat(group.id)
                     setChatType("group")
@@ -177,10 +171,7 @@ export default function ChatInterface() {
         </Tabs>
 
         <div className="p-4 border-t mt-auto">
-          <Button variant="outline" className="w-full" onClick={handleLogout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
+          <LogoutButton />
         </div>
       </div>
 
