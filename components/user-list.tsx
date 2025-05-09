@@ -1,5 +1,7 @@
 "use client"
 
+import Image from "next/image"
+
 interface UserListProps {
   users: {
     id: string
@@ -37,7 +39,7 @@ export default function UserList({ users, activeUserId, onSelectUser }: UserList
           onClick={() => onSelectUser(user.id)}
         >
           <div className="relative">
-            <img src={user.avatar || "/placeholder.svg"} alt={user.name} className="w-10 h-10 rounded-full" />
+            <Image src={user.avatar || "/vercel.svg"} alt={user.name} className="w-10 h-10 rounded-full" />
             <span
               className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
                 user.online ? "bg-green-500" : "bg-gray-300"
